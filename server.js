@@ -25,6 +25,23 @@ let books = [
 const typeDefs = gql`
   type Query {
     books: [Book]
+    book(id: String!): Book
+  }
+  
+  type Mutation {
+    addBook(title: String, author: String) : Book
+    updateBook(id: String, changes: UpdateBook) : Book
+    deleteBook(id: String) : Message
+  }
+  
+  type Message {
+    deletedId: String!
+    message: String
+  }
+  
+  input UpdateBook {
+    title: String
+    author: String
   }
 
   type Book {
@@ -37,31 +54,32 @@ const typeDefs = gql`
 // The resolvers
 const resolvers = {
   Query: {
-    books: () => books
+    books: () => books,
+    book: (_, { id }) => books.find(book => book.id === id)
+  },
+  Mutation: {
+    addBook: (_, book) => {
+      book.id = uuid();
+      books.push(book);
+      return book;
+    },
+    deleteBook: (_, { id }) => {
+      const preLength = books.length;
+      books = books.filter(book => book.id !== id);
+      return preLength > books.length
+        ? { deletedId: id, message: "Success!" }
+        : new Error("No book to delete!");
+    },
+    updateBook: (_, { id, changes }) => {
+      const bookToUpdate = books.find(book => book.id === id);
+      if (bookToUpdate) {
+        const newBook = { ...bookToUpdate, ...changes };
+        books = [...books.filter(book => book.id !== id), newBook];
+        return newBook;
+      }
+      return new Error("No book to update!");
+    }
   }
-  // Mutation: {
-  //   addBook: (_, book) => {
-  //     book.id = uuid();
-  //     books.push(book);
-  //     return book;
-  //   },
-  //   deleteBook: (_, { id }) => {
-  //     const preLength = books.length;
-  //     books = books.filter(book => book.id !== id);
-  //     return preLength > books.length
-  //       ? { deletedId: id, message: "Success!" }
-  //       : new Error("No book to delete!");
-  //   },
-  //   updateBook: (_, { id, changes }) => {
-  //     const bookToUpdate = books.find(book => book.id === id);
-  //     if (bookToUpdate) {
-  //       const newBook = { ...bookToUpdate, ...changes };
-  //       books = [...books.filter(book => book.id !== id), newBook];
-  //       return newBook;
-  //     }
-  //     return new Error("No book to update!");
-  //   }
-  // }
 };
 
 // Put together a schema

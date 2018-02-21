@@ -58,23 +58,26 @@ class Books extends Component {
 
           return (
             <React.Fragment>
+              {/* ------------------ Add new book section ----------------*/}
               <form onSubmit={this.onSubmit}>
                 <input name="title" placeholder="title" />
                 <input name="author" placeholder="author" />
                 <button type="submit">Add author</button>
               </form>
+              {/* ------------------ Showing stuff section ----------------*/}
               {data.books.map(book => (
                 <div key={book.id}>
                   {book.title} --------- {book.author}
                 </div>
               ))}
+              {/* ------------------ Delete book section ----------------*/}
               <input
                 style={{ width: 400 }}
                 name="id"
                 placeholder="id to delete"
                 ref={id => (this.id = id)}
               />
-              <button onClick={this.onDelete}> Delete book </button>
+              <button onClick={this.onDelete}> Delete book</button>
             </React.Fragment>
           );
         }}
@@ -100,7 +103,9 @@ export default compose(
     options: {
       update: (proxy, { data }) => {
         const { books } = proxy.readQuery({ query: GET_BOOKS });
-        const filtered = books.filter(book => book.id !== data.deleteBook.deletedId);
+        const filtered = books.filter(
+          book => book.id !== data.deleteBook.deletedId
+        );
         proxy.writeData({ data: { books: filtered } });
       }
       //refetchQueries: ['GetBooks']

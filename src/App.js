@@ -6,11 +6,14 @@ import React, { Component } from "react";
 // const client = new ApolloClient({ uri: "http://localhost:3000/graphql" });
 
 class App extends Component {
-  render() {
-    return (
-      <div/>
-    );
-  }
+  // render() {
+  //   return (
+  //     <ApolloProvider client={client}>
+  //       <Books />
+  //     </ApolloProvider>
+  //   );
+  // }
 }
 
 export default App;
+

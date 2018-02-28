@@ -18,7 +18,7 @@
     "uuid": "^3.2.1"
   },
   "scripts": {
-    "server": "node server.js",
+    "server": "node serverDone.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

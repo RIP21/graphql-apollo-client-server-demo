@@ -7,16 +7,22 @@ const GET_BOOKS = gql`
     books {
       id
       title
-      author
+      author {
+        id
+        name
+      }
     }
   }
 `;
 
 const ADD_BOOK = gql`
-  mutation($title: String!, $author: String) {
+  mutation($title: String!, $author: AuthorInput) {
     addBook(title: $title, author: $author) {
       id
-      author
+      author {
+        id
+        name
+      }
       title
     }
   }
@@ -24,9 +30,7 @@ const ADD_BOOK = gql`
 
 const DELETE_BOOK = gql`
   mutation DeleteBook($id: String!) {
-    deleteBook(id: $id) {
-      deletedId
-    }
+    deleteBook(id: $id)
   }
 `;
 
@@ -35,7 +39,7 @@ class Books extends Component {
     e.preventDefault();
     const [title, author] = e.target.children;
     this.props.addBook({
-      variables: { title: title.value, author: author.value }
+      variables: { title: title.value, author: { name: author.value } }
     });
     title.value = "";
     author.value = "";
@@ -62,12 +66,13 @@ class Books extends Component {
               <form onSubmit={this.onSubmit}>
                 <input name="title" placeholder="title" />
                 <input name="author" placeholder="author" />
-                <button type="submit">Add author</button>
+                <button type="submit">Add new 📗</button>
               </form>
               {/* ------------------ Showing stuff section ----------------*/}
+              {data.books.length === 0 && <div>Nothing to show 💩</div>}
               {data.books.map(book => (
                 <div key={book.id}>
-                  {book.title} --------- {book.author}
+                  {book.id} ---------- {book.title} --------- {book.author.name}
                 </div>
               ))}
               {/* ------------------ Delete book section ----------------*/}
@@ -77,7 +82,7 @@ class Books extends Component {
                 placeholder="id to delete"
                 ref={id => (this.id = id)}
               />
-              <button onClick={this.onDelete}> Delete book</button>
+              <button onClick={this.onDelete}> Delete 📕</button>
             </React.Fragment>
           );
         }}
